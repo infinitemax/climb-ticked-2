@@ -1,0 +1,3 @@
+note on the user folder
+
+We add the __init__ file which allows us to treat the user folder as a python module that we can import into other python files. __init__ doesn't actually need any content.
