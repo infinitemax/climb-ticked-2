@@ -5,9 +5,11 @@ name = "pypi"
 
 [packages]
 flask = "*"
-pymongo = "*"
 passlib = "*"
 flask-cors = "*"
+flask-bcrypt = "*"
+python-dotenv = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 

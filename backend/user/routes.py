@@ -11,5 +11,5 @@ from user.models import User
 
 @app.route("/register", methods = ["POST"])
 def signup():
-
+    
     return User().signup()

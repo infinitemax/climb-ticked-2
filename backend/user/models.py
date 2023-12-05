@@ -1,5 +1,7 @@
 # this is for creating our user class
 from flask import Flask, jsonify, request
+from app import bcrypt, db
+from bson import json_util
 
 class User:
 
@@ -8,11 +10,46 @@ class User:
 
         data = request.json
 
-        print(data["username"])
+        # encrypt password
+        hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+
+
+        # create user object
         user = {
             "username" : data["username"],
             "email" : data["email"],
-            "password" : data["password"]
+            "password" : hashed_pw,
+            "is_admin" : False
         }
 
-        return jsonify(user), 200
+        # check for existing usernames
+        check = db.users.find_one({"username" : user["username"]})
+
+        if check:
+            return jsonify({
+                "status" : 400,
+                "message" : "username already taken"
+            }), 400
+        
+        # check for existing emails
+        check = db.users.find_one({"email" : user["email"]})
+
+        if check:
+            return jsonify({
+                "status" : 400,
+                "message" : "email already registered"
+            }), 400
+
+        db.users.insert_one(user)
+
+        print(user)
+        return jsonify({
+            "status" : 200,
+            "message": "success",
+            "user" : {
+                "_id" : json_util.dumps(user["_id"]),
+                "username" : user["username"],
+                "email" : user["email"],
+                "password" : user["password"],
+            }
+        })
