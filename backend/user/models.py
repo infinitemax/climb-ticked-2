@@ -1,7 +1,10 @@
 # this is for creating our user class
+
 from flask import Flask, jsonify, request
+from bson.json_util import dumps
 from app import bcrypt, db
 from bson import json_util
+from bson.objectid import ObjectId
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, unset_jwt_cookies
 
 class User:
@@ -16,11 +19,12 @@ class User:
 
 
         # create user object
+        #  note: auth level reflects access rights: 1 = user, 2 = setter, 3 = manager, 4 = super_admin
         user = {
             "username" : data["username"],
             "email" : data["email"],
             "password" : hashed_pw,
-            "is_admin" : False
+            "auth_level" : 1 
         }
 
         # check for existing usernames
@@ -109,4 +113,10 @@ class User:
     @jwt_required()
     def get_user_data(self):
         user_id = get_jwt_identity()
-        return user_id
+
+        user = db.users.find_one({"_id": ObjectId(user_id) })
+        print(user)
+
+        return dumps(user)
+
+   

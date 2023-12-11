@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, make_response
-from app import app
+from app import app, db
 # the above imports an instance of the flask app from app.py - this allows us to create routes.
 from flask import request
 from middleware.hello import Hello
@@ -9,9 +9,6 @@ from datetime import datetime, timedelta, timezone
 
 # import the class user from our models, which we can then use in our routes.
 from user.models import User
-
-
-# COMPLETELY CONFUSED - NO IDEA WHY BUT IT'S NOT SETTING THE TOKEN AS A COOKIE IN THE BROWSER
 
 
 
@@ -38,8 +35,7 @@ def refresh_expiring_jwts(response):
 
 
 @app.route("/register", methods = ["POST", "GET"])
-def signup():
-    
+def signup():   
     return User().signup()
 
 @app.route("/login", methods=["POST"])
@@ -77,7 +73,18 @@ def get_user():
     user = Protect().get_user()
     return user["username"]
 
-@app.route("/get_user_data", methods=["GET"])
+# @app.route("/get_user_data", methods=["GET"])
+# def get_user():
+#     user = Protect().get_user()
+#     return user["username"]
 
+@app.route("/get_user_data", methods=["GET"])
 def get_user_data():
-    return User().get_user_data()
+    user = User().get_user_data()
+    return user
+
+# @app.route("/get_user_by_name", methods=["GET"])
+# def get_user_by_name():
+    
+#     user = User().get_user_by_name()
+#     return user
