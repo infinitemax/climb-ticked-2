@@ -12,7 +12,6 @@ class Protect():
         user_id = get_jwt_identity()
         access_token = create_access_token(identity=user_id)
         return jsonify({
-            "msg": user_id,
             "access_token" : access_token
         })
     

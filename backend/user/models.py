@@ -2,7 +2,7 @@
 from flask import Flask, jsonify, request
 from app import bcrypt, db
 from bson import json_util
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, unset_jwt_cookies
 
 class User:
 
@@ -93,16 +93,20 @@ class User:
         # ========create token========
         # get user ID
         id = str(user["_id"])
+
+        response = jsonify({"msg": "login successful"})
+        # create token
         access_token = create_access_token(identity=id)
-        refresh_token = create_refresh_token(identity=id)
+        print("got to this point")
+        set_access_cookies(response, access_token)
+        return response
 
+    def logout(self):
+        response = jsonify({"msg" : "logout successful"})
+        unset_jwt_cookies(response)
+        return response
 
-
-        print(username, password)
-        return jsonify(
-            {"message" : "success",
-             "valid_pw" : valid_password,
-             "access_token" : access_token,
-             "refresh_token" : refresh_token,
-             "id" : id}
-            ), 200
+    @jwt_required()
+    def get_user_data(self):
+        user_id = get_jwt_identity()
+        return user_id
