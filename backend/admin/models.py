@@ -13,7 +13,9 @@ class Admin:
     
     @jwt_required()
     def get_user_by_name(self):
+        print("hello seraching time")
         name = request.args.get("name")
-        user = db.users.find_one({"username" : name})
-        print(user)
-        return dumps(user)
+        results = db.users.find({"username" : {"$regex" : name, "$options" : "i"}}, {"_id": 1, "username": 1, "email" : 1})
+        # for user in results:
+        #     print(user)
+        return dumps(results)
