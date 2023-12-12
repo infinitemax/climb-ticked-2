@@ -1,7 +1,11 @@
 # this is for creating our user class
+
 from flask import Flask, jsonify, request
+from bson.json_util import dumps
 from app import bcrypt, db
 from bson import json_util
+from bson.objectid import ObjectId
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token, set_access_cookies, unset_jwt_cookies
 
 class User:
 
@@ -15,11 +19,12 @@ class User:
 
 
         # create user object
+        #  note: auth level reflects access rights: 1 = user, 2 = setter, 3 = manager, 4 = super_admin
         user = {
             "username" : data["username"],
             "email" : data["email"],
             "password" : hashed_pw,
-            "is_admin" : False
+            "auth_level" : 1 
         }
 
         # check for existing usernames
@@ -47,9 +52,71 @@ class User:
             "status" : 200,
             "message": "success",
             "user" : {
+                # TODO sort this out!
                 "_id" : json_util.dumps(user["_id"]),
                 "username" : user["username"],
                 "email" : user["email"],
                 "password" : user["password"],
             }
         })
+    
+
+    def login(self):
+        # get data
+        data = request.json.get
+        username = data("username")
+        password = data("password")
+
+        # check for inputs
+        if not username:
+            return jsonify({
+                "message" : "Please provide a username"
+            }), 400
+        
+        if not password:
+            return jsonify({
+                "message" : "Please provide a password"
+            }), 400
+
+        # check for user
+        user = db.users.find_one({"username" : username})
+
+        if not user:
+            return jsonify({
+                "message" : "No user of that name - (case sensitive)"
+            }), 400
+
+        # verify password
+        valid_password = bcrypt.check_password_hash(user["password"], password)
+
+        if not valid_password:
+            return jsonify({
+                "message" : "Incorrect password"
+            }), 400
+
+        # ========create token========
+        # get user ID
+        id = str(user["_id"])
+
+        response = jsonify({"msg": "login successful"})
+        # create token
+        access_token = create_access_token(identity=id)
+        print("got to this point")
+        set_access_cookies(response, access_token)
+        return response
+
+    def logout(self):
+        response = jsonify({"msg" : "logout successful"})
+        unset_jwt_cookies(response)
+        return response
+
+    @jwt_required()
+    def get_user_data(self):
+        user_id = get_jwt_identity()
+
+        user = db.users.find_one({"_id": ObjectId(user_id) })
+        print(user)
+
+        return dumps(user)
+
+   

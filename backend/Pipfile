@@ -10,6 +10,8 @@ flask-cors = "*"
 flask-bcrypt = "*"
 python-dotenv = "*"
 pymongo = {extras = ["srv"], version = "*"}
+flask-jwt-extended = "*"
+flask-pymongo = "*"
 
 [dev-packages]
 
