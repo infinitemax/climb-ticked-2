@@ -43,4 +43,32 @@ class Admin:
             "user": user.get("username"),
             "msg": "user authorisation has been updated"
         }), 200
+    
+    @jwt_required()
+    def find_managers(self):
+        print("looking for managers")
+        
+        name = request.args.get("name")
+
+        # NOTE the use of cursor and list! This is because what we get back from the db is an iterable cursor, which we were consuming with the for loop print, thus we couldn't return it. By doing it this way we turn the cursor into a list which we can iterate over and then return. Good to know...
+        
+        # Find all users with username including search term, and whose auth_level is 3 or above
+        results_cursor = db.users.find({
+            "$and": [
+                {"username" : {"$regex" : name, "$options" : "i"}},
+                {"auth_level" : { "$gte": 3}}
+            ]}
+            , {"_id": 0, "username": 1}
+            
+        )
+        
+        results_list = list(results_cursor)
+        
+        # for result in results_list:
+        #     print(result)
+        
+        return dumps(results_list)
+    
+
+    
      

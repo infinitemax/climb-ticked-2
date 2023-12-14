@@ -19,7 +19,13 @@ def get_user_by_name():
 
 @app.route("/edit_admin_user_auth", methods=["POST"])
 def edit_admin_user_auth():
-    print("21")
+    
     update = Admin().edit_admin_user()
     return update
+
+@app.route("/find_managers", methods=["GET"])
+def find_managers():
+
+    results = Admin().find_managers()
+    return results
 

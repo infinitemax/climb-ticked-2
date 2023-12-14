@@ -50,6 +50,7 @@ db = client.users
 # Routes - this passes all the routes to our main app file
 from user import routes
 from admin import routes
+from gym_admin import routes
 
 # ========= JWT as cookie approach, autho update =======
 # Using an `after_request` callback, we refresh any token that is within 30
