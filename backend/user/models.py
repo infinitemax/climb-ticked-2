@@ -118,5 +118,14 @@ class User:
         print(user)
 
         return dumps(user)
+    
+
+    # @jwt_required()
+    # def edit_admin_user(self):
+    #     print("updating admin user via User models")
+    #     # print(request.args)
+    #     # find user and update
+    #     return "update from User models....." 
+    
 
    
