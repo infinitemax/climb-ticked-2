@@ -12,4 +12,4 @@ class GymAdmin:
     @jwt_required()
     def get_user_by_name(self):
         return "hello"
-        
+    

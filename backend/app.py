@@ -12,6 +12,8 @@ from datetime import timedelta, datetime, timezone
 
 import pymongo
 
+import cloudinary
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -71,6 +73,15 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original response
         return response
+
+
+# =======CLOUDINARY=======
+
+cloudinary.config(
+    cloud_name = os.getenv('CLOUD_NAME'), 
+    api_key = os.getenv('API_KEY'), 
+    api_secret = os.getenv('API_SECRET') 
+)
 
 @app.route("/")
 def home():
