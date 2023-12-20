@@ -40,8 +40,10 @@ def create_gym():
 # add message on teh front end. plus could use an npm alert package?
     upload_result = None
 
+    # TODO - sort this so the gym is added even without an image
     if request.method == "POST":
         if "file" not in request.files:
+            print("no file, how unusual")
             return "no file, how unusual"
 
         file_to_upload = request.files["file"]
@@ -58,26 +60,43 @@ def create_gym():
             url = "no image"
 
         # get manager ID to add to the document
-        
         manager = db.users.find_one({ "username" : data["gymManager"]})
 
         print("manager is", manager)
 
-        # create new gym and dave to db
-
+        # create new gym object and save to db
         newGym = {
             "gymName" : data["gymName"],
-            "gymManage" : data["gymManager"],
+            "gymManager" : data["gymManager"],
             "gymManagerId" : manager["_id"],
+            "gymModerators": [],
+            "gymModeratorsById": [],
             "city" : data["city"],
             "country" : data["country"],
-            "image" : url
+            "image" : url,
+            "cardimage" : ""
         }
+
+        # add moderator(s)
+        # iterate through list of mods in search
+        # split moderators into array
+        moderators = request.form["gymModerators"].split()
+        
+        for moderator in moderators:
+            # find user by id
+            new_gym_mod = db.users.find_one({"username" : moderator})
+            # push username to array
+            newGym["gymModerators"].append(new_gym_mod["username"])
+            # push id to array
+            newGym["gymModeratorsById"].append(new_gym_mod["_id"])        
+
 
         db.gyms.insert_one(newGym)
 
-
-        return jsonify(upload_result)
+        return jsonify({
+            "status": 200,
+            "message": "gym successfully added, happy climbing!"
+        }), 200
 
 
 

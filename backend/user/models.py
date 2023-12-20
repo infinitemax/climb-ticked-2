@@ -105,6 +105,14 @@ class User:
         set_access_cookies(response, access_token)
         return response
 
+    @jwt_required()
+    def check_auth(self):
+        user_id = get_jwt_identity()
+        user = db.users.find_one({"_id": ObjectId(user_id) })
+        auth_level = user["auth_level"]
+        
+        return jsonify({"auth_level" : auth_level})
+
     def logout(self):
         response = jsonify({"msg" : "logout successful"})
         unset_jwt_cookies(response)
@@ -120,12 +128,30 @@ class User:
         return dumps(user)
     
 
-    # @jwt_required()
-    # def edit_admin_user(self):
-    #     print("updating admin user via User models")
-    #     # print(request.args)
-    #     # find user and update
-    #     return "update from User models....." 
+
+    @jwt_required()
+    def find_gyms(self):
+
+        # search for gyms, return an array
+        print("search term is ", request.args.get("searchTerm"))
+        print("parameter is ", request.args.get("parameter"))
+
+        searchTerm = request.args.get("searchTerm")
+        parameter = request.args.get("parameter")
+
+        gyms_cursor = db.gyms.find(
+            {parameter : {"$regex" : searchTerm, "$options" : "i"}},
+            {"_id" : 0, "gymName" : 1, "city" : 1, "country" : 1, "image" : 1}
+        ).sort("name")
+
+        gym_list = list(gyms_cursor)
+
+        print(gym_list)
+
+        for gym in gym_list:
+            print(gym["gymName"])
+
+        return dumps(gym_list)
     
 
    

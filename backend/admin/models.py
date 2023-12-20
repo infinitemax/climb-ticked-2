@@ -56,16 +56,17 @@ class Admin:
         results_cursor = db.users.find({
             "$and": [
                 {"username" : {"$regex" : name, "$options" : "i"}},
-                {"auth_level" : { "$gte": 3}}
+                {"auth_level" : { "$gte": 2}}
             ]}
-            , {"_id": 0, "username": 1}
+            , {"_id": 0, "username": 1, "auth_level" : 1}
             
         )
         
         results_list = list(results_cursor)
         
-        # for result in results_list:
-        #     print(result)
+        # convert auth_level to string to aid indexing in the front end
+        for result in results_list:
+            result["auth_level"] = str(result["auth_level"])
         
         return dumps(results_list)
     

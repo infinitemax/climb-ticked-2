@@ -42,6 +42,9 @@ def signup():
 def login():
     return User().login()
 
+@app.route("/check_auth", methods=["GET"])
+def check_auth():
+    return User().check_auth()
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -82,6 +85,10 @@ def get_user():
 def get_user_data():
     user = User().get_user_data()
     return user
+
+@app.route("/find_gyms", methods=["GET"])
+def find_gyms():
+    return User().find_gyms()
 
 # @app.route("/get_user_by_name", methods=["GET"])
 # def get_user_by_name():
