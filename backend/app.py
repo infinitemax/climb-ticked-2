@@ -25,6 +25,7 @@ CORS(app, resources={
 
 bcrypt = Bcrypt(app)
 
+# NOTE - start the app using the command: "flask run --debug"
 
 # configure JWT
 app.config["JWT_COOKIE_SECURE"] = False
