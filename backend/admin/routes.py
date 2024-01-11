@@ -9,9 +9,23 @@ from datetime import datetime, timedelta, timezone
 
 # import the class Admin from the models, which we can then use in our routes.
 from admin.models import Admin
+from user.models import User
 
 @app.route("/get_user_by_name", methods=["GET"])
 def get_user_by_name():
     
     user = Admin().get_user_by_name()
     return user
+
+@app.route("/edit_admin_user_auth", methods=["POST"])
+def edit_admin_user_auth():
+    
+    update = Admin().edit_admin_user()
+    return update
+
+@app.route("/find_managers", methods=["GET"])
+def find_managers():
+
+    results = Admin().find_managers()
+    return results
+

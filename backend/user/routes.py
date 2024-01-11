@@ -16,21 +16,21 @@ from user.models import User
 # ========= JWT as cookie approach, autho update =======
 # Using an `after_request` callback, we refresh any token that is within 30
 # minutes of expiring. Change the timedeltas to match the needs of your application.
-@app.after_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        print("exp_timestamp = ", exp_timestamp)
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=2))
-        print("target_timestamp = ", target_timestamp)
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            set_access_cookies(response, access_token)
-        return response
-    except (RuntimeError, KeyError):
-        # Case where there is not a valid JWT. Just return the original response
-        return response
+# @app.after_request
+# def refresh_expiring_jwts(response):
+#     try:
+#         exp_timestamp = get_jwt()["exp"]
+#         print("exp_timestamp = ", exp_timestamp)
+#         now = datetime.now(timezone.utc)
+#         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+#         print("target_timestamp = ", target_timestamp)
+#         if target_timestamp > exp_timestamp:
+#             access_token = create_access_token(identity=get_jwt_identity())
+#             set_access_cookies(response, access_token)
+#         return response
+#     except (RuntimeError, KeyError):
+#         # Case where there is not a valid JWT. Just return the original response
+#         return response
 
 
 
@@ -42,6 +42,9 @@ def signup():
 def login():
     return User().login()
 
+@app.route("/check_auth", methods=["GET"])
+def check_auth():
+    return User().check_auth()
 
 @app.route("/logout", methods=["POST"])
 def logout():
@@ -83,8 +86,18 @@ def get_user_data():
     user = User().get_user_data()
     return user
 
+@app.route("/find_gyms", methods=["GET"])
+def find_gyms():
+    return User().find_gyms()
+
 # @app.route("/get_user_by_name", methods=["GET"])
 # def get_user_by_name():
     
 #     user = User().get_user_by_name()
 #     return user
+
+# @app.route("/edit_admin_user_auth", methods=["POST"])
+# def edit_admin_user_auth():
+#     print("21")
+#     update = User().edit_admin_user()
+#     return update

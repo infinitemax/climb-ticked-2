@@ -12,6 +12,7 @@ python-dotenv = "*"
 pymongo = {extras = ["srv"], version = "*"}
 flask-jwt-extended = "*"
 flask-pymongo = "*"
+cloudinary = "*"
 
 [dev-packages]
 
