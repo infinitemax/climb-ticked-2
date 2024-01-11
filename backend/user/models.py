@@ -141,7 +141,7 @@ class User:
 
         gyms_cursor = db.gyms.find(
             {parameter : {"$regex" : searchTerm, "$options" : "i"}},
-            {"_id" : 0, "gymName" : 1, "city" : 1, "country" : 1, "image" : 1}
+            {"_id" : 1, "gymName" : 1, "city" : 1, "country" : 1, "image" : 1}
         ).sort("name")
 
         gym_list = list(gyms_cursor)
