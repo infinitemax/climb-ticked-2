@@ -11,5 +11,5 @@ from gyms.models import Gym
 
 @app.route("/gyms/<id>", methods=["GET"])
 def find_gym(id):
-
+    print("hello")
     return Gym().find_gym(id)

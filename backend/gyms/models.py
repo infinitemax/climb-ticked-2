@@ -12,7 +12,6 @@ class Gym:
     def find_gym(self, gym_id):
 
         gym = db.gyms.find_one({"_id" : ObjectId(gym_id)})
-
-        gym["_id"] = gym_id
+        gym["stringId"] = gym_id
         print(gym)
         return json.loads(json_util.dumps(gym))
